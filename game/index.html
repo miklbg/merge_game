@@ -36,11 +36,11 @@
             gap: 0;
             /* Use either max-width or max-height to constrain */
             width: min(100vw, 100vh * 2 / 3);
-            /* Ensure the container fits within viewport height, accounting for safe areas on iOS Safari */
-            max-height: calc(100vh - env(safe-area-inset-bottom));
-            height: calc(100vh - env(safe-area-inset-bottom));
-            /* Add padding at bottom for safe area */
-            padding-bottom: env(safe-area-inset-bottom);
+            /* Ensure the container fits within viewport height - use 100dvh for better mobile support */
+            max-height: 100vh;
+            max-height: 100dvh; /* Dynamic viewport height for mobile browsers */
+            height: 100vh;
+            height: 100dvh;
         }
 
         #game-wrapper {
@@ -177,10 +177,8 @@
             background: linear-gradient(to top, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.8));
             backdrop-filter: blur(8px);
             padding: 8px;
-            /* Add safe area padding for iOS Safari to prevent overlap with address bar at bottom */
+            /* Add safe area padding for iOS Safari at the bottom */
             padding-bottom: max(8px, env(safe-area-inset-bottom));
-            /* Also ensure content is not hidden at top on notched devices */
-            margin-bottom: env(safe-area-inset-bottom);
             display: flex;
             justify-content: center;
             align-items: center;
