@@ -30,17 +30,15 @@
         #game-wrapper {
             display: flex;
             flex-direction: column;
-            width: 100vw;
-            height: 100vh;
+            /* --- FIX: Enforce 2:3 aspect ratio --- */
+            aspect-ratio: 2 / 3;
+            /* Use either max-width or max-height to constrain, let aspect-ratio determine the other */
+            width: min(100vw, 100vh * 2 / 3);
+            height: min(100vh, 100vw * 3 / 2);
             /* --- FIX: Bright wrapper background --- */
             background-color: #fff7ed; /* bg-orange-50 */
             overflow: hidden;
             position: relative;
-
-            aspect-ratio: 2 / 3; 
-            
-            max-width: 100vw; 
-            max-height: 100vh; 
             
             border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
@@ -99,11 +97,31 @@
             font-weight: 500;
         }
 
+        #start-modal {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        #start-modal.hidden {
+            opacity: 0;
+            transform: scale(0.9);
+            pointer-events: none;
+        }
+
         #game-over-modal {
             transition: opacity 0.3s ease, transform 0.3s ease;
         }
 
         #game-over-modal.hidden {
+            opacity: 0;
+            transform: scale(0.9);
+            pointer-events: none;
+        }
+
+        #restart-confirm-modal {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        #restart-confirm-modal.hidden {
             opacity: 0;
             transform: scale(0.9);
             pointer-events: none;
@@ -158,9 +176,11 @@
                         <span class="text-sm opacity-80">Next</span>
                         <div id="next-fruit" class="text-3xl"></div>
                     </div>
-                    <!-- --- FIX: Playful button color --- -->
-                    <button id="new-game-button" class="px-3 py-1 bg-orange-500 text-white font-bold rounded-lg shadow-lg text-sm hover:bg-orange-400 transition-all">
-                        New Game
+                    <!-- Restart Icon Button -->
+                    <button id="new-game-button" class="p-2 bg-transparent hover:bg-orange-100 rounded-lg transition-all group" title="Restart Game" aria-label="Restart Game">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-orange-600 group-hover:text-orange-700 transition-colors">
+                            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                        </svg>
                     </button>
                 </div>
             </div>
@@ -179,6 +199,20 @@
             <button id="restart-button" class="px-6 py-3 bg-green-500 text-white font-bold rounded-lg shadow-lg text-xl hover:bg-green-400 transition-all">
                 Restart
             </button>
+        </div>
+
+        <!-- Restart Confirmation Modal -->
+        <div id="restart-confirm-modal" class="hidden absolute inset-0 bg-white/70 text-gray-900 backdrop-blur-md z-40 flex flex-col justify-center items-center text-center p-8">
+            <h2 class="text-3xl font-bold text-orange-600 mb-4">Restart Game?</h2>
+            <p class="text-lg mb-8">Your current progress will be lost.</p>
+            <div class="flex gap-4">
+                <button id="restart-confirm-yes" class="px-6 py-3 bg-red-500 text-white font-bold rounded-lg shadow-lg text-xl hover:bg-red-400 transition-all">
+                    Yes, Restart
+                </button>
+                <button id="restart-confirm-no" class="px-6 py-3 bg-gray-500 text-white font-bold rounded-lg shadow-lg text-xl hover:bg-gray-400 transition-all">
+                    Cancel
+                </button>
+            </div>
         </div>
     </div>
 
@@ -206,6 +240,9 @@
             const gameOverModal = document.getElementById('game-over-modal');
             const finalScoreEl = document.getElementById('final-score');
             const restartButton = document.getElementById('restart-button');
+            const restartConfirmModal = document.getElementById('restart-confirm-modal');
+            const restartConfirmYes = document.getElementById('restart-confirm-yes');
+            const restartConfirmNo = document.getElementById('restart-confirm-no');
 
             // --- Matter.js modules ---
             const { Engine, Render, Runner, World, Bodies, Body, Events, Composite, Common } = Matter;
@@ -855,13 +892,30 @@
                 gameWrapper.addEventListener('pointermove', handlePointerMove, { passive: false });
                 gameWrapper.addEventListener('pointerup', handlePointerUp, { passive: false });
                 restartButton.addEventListener('click', handleRestart);
-                newGameButton.addEventListener('click', handleRestart); 
+                newGameButton.addEventListener('click', showRestartConfirmation);
+                restartConfirmYes.addEventListener('click', confirmRestart);
+                restartConfirmNo.addEventListener('click', cancelRestart);
             }
             
             // --- Event Handlers (to allow removal) ---
             function handlePointerDown(e) { e.preventDefault(); moveFruit(e.clientX); }
             function handlePointerMove(e) { e.preventDefault(); moveFruit(e.clientX); }
             function handlePointerUp(e) { e.preventDefault(); dropFruit(); }
+            
+            function showRestartConfirmation() {
+                if (!isGameOver) {
+                    restartConfirmModal.classList.remove('hidden');
+                }
+            }
+            
+            function confirmRestart() {
+                restartConfirmModal.classList.add('hidden');
+                handleRestart();
+            }
+            
+            function cancelRestart() {
+                restartConfirmModal.classList.add('hidden');
+            }
             
             function handleRestart() {
                 localStorage.removeItem(GAME_STATE_KEY);
@@ -875,7 +929,9 @@
                 gameWrapper.removeEventListener('pointermove', handlePointerMove);
                 gameWrapper.removeEventListener('pointerup', handlePointerUp);
                 restartButton.removeEventListener('click', handleRestart);
-                newGameButton.removeEventListener('click', handleRestart); 
+                newGameButton.removeEventListener('click', showRestartConfirmation);
+                restartConfirmYes.removeEventListener('click', confirmRestart);
+                restartConfirmNo.removeEventListener('click', cancelRestart); 
                 Events.off(engine);
                 Events.off(render);
                 World.clear(world, false);
@@ -941,7 +997,9 @@
                             gameWrapper.removeEventListener('pointermove', handlePointerMove);
                             gameWrapper.removeEventListener('pointerup', handlePointerUp);
                             restartButton.removeEventListener('click', handleRestart);
-                            newGameButton.removeEventListener('click', handleRestart); 
+                            newGameButton.removeEventListener('click', showRestartConfirmation);
+                            restartConfirmYes.removeEventListener('click', confirmRestart);
+                            restartConfirmNo.removeEventListener('click', cancelRestart); 
                             Events.off(engine);
                             Events.off(render);
                             World.clear(world, false);

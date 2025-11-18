@@ -1,0 +1,6 @@
+# Screenshots
+screenshots/
+
+# Temporary files
+*.log
+.DS_Store
