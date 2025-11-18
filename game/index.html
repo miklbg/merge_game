@@ -988,6 +988,23 @@
             function dropFruit() {
                 if (isGameOver || isDropping) return;
 
+                // Check if any fruits are already resting above the game over line
+                const gameOverLine = world.bodies.find(b => b.label === 'gameOverLine');
+                if (gameOverLine) {
+                    const fruitsAboveLine = Composite.allBodies(world).filter(body => {
+                        if (body.label !== 'fruit') return false;
+                        // Check if fruit is above the line and nearly stationary
+                        const isAboveLine = body.position.y < gameOverLineY;
+                        const isStationary = Math.abs(body.velocity.y) < 0.5 && Math.abs(body.velocity.x) < 0.5;
+                        return isAboveLine && isStationary;
+                    });
+                    
+                    if (fruitsAboveLine.length > 0) {
+                        triggerGameOver();
+                        return;
+                    }
+                }
+
                 isDropping = true;
                 
                 const droppedFruit = createFruitBody(
@@ -1183,7 +1200,7 @@
 
                 // --- Game Over Check ---
                 Events.on(engine, 'collisionStay', (event) => {
-                    if (isGameOver || isDropping || collisionTimeout) return; 
+                    if (isGameOver || collisionTimeout) return; 
                     const pairs = event.pairs;
                     for (let i = 0; i < pairs.length; i++) {
                         const pair = pairs[i];
