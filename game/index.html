@@ -1312,7 +1312,10 @@
                         if (bodyB.label === 'gameOverLine' && bodyA.label === 'fruit') fruitBody = bodyA;
 
                         if (fruitBody) {
-                            if (fruitBody.velocity.y < 0.05 && fruitBody.velocity.y > -0.05 && Math.abs(fruitBody.velocity.x) < 0.1) {
+                            // Check if the CENTER of the fruit is above the line (not just touching it)
+                            const isCenterAboveLine = fruitBody.position.y < gameOverLineY;
+                            // Only trigger game over if center is above line AND fruit is stationary
+                            if (isCenterAboveLine && fruitBody.velocity.y < 0.05 && fruitBody.velocity.y > -0.05 && Math.abs(fruitBody.velocity.x) < 0.1) {
                                 triggerGameOver();
                                 break;
                             }
