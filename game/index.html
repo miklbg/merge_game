@@ -35,13 +35,29 @@
             /* Use either max-width or max-height to constrain, let aspect-ratio determine the other */
             width: min(100vw, 100vh * 2 / 3);
             height: min(100vh, 100vw * 3 / 2);
-            /* --- FIX: Bright wrapper background --- */
-            background-color: #fff7ed; /* bg-orange-50 */
             overflow: hidden;
             position: relative;
             
             border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            
+            /* Weaved basket border effect */
+            border: 20px solid;
+            border-image: repeating-linear-gradient(
+                45deg,
+                #b45309 0,
+                #b45309 8px,
+                #d97706 8px,
+                #d97706 16px,
+                #92400e 16px,
+                #92400e 24px,
+                #b45309 24px,
+                #b45309 32px
+            ) 20;
+            
+            /* Background for content area */
+            background-color: #fff7ed; /* bg-orange-50 */
+            background-clip: padding-box;
         }
 
         #game-header {
@@ -576,6 +592,53 @@
 
                 Render.run(render);
                 Runner.run(runner, engine);
+
+                // Draw woven basket pattern on walls before rendering
+                Events.on(render, 'beforeRender', () => {
+                    const context = render.context;
+                    const bodies = Composite.allBodies(world);
+                    
+                    context.save();
+                    
+                    bodies.forEach(body => {
+                        if (body.label === 'ground' || body.label === 'wall-left' || body.label === 'wall-right') {
+                            const vertices = body.vertices;
+                            const minX = Math.min(...vertices.map(v => v.x));
+                            const maxX = Math.max(...vertices.map(v => v.x));
+                            const minY = Math.min(...vertices.map(v => v.y));
+                            const maxY = Math.max(...vertices.map(v => v.y));
+                            
+                            // Create woven basket pattern
+                            const stripWidth = 8 * scaleFactor;
+                            const colors = ['#b45309', '#92400e', '#d97706'];
+                            
+                            // Fill base color
+                            context.fillStyle = '#b45309';
+                            context.fillRect(minX, minY, maxX - minX, maxY - minY);
+                            
+                            // Draw horizontal weave
+                            for (let y = minY; y < maxY; y += stripWidth * 2) {
+                                for (let x = minX; x < maxX; x += stripWidth * 3) {
+                                    context.fillStyle = colors[Math.floor((y / (stripWidth * 2)) % colors.length)];
+                                    context.fillRect(x, y, stripWidth * 1.5, stripWidth);
+                                    context.fillStyle = colors[(Math.floor((y / (stripWidth * 2))) + 1) % colors.length];
+                                    context.fillRect(x + stripWidth * 1.5, y, stripWidth * 1.5, stripWidth);
+                                }
+                            }
+                            
+                            // Draw vertical weave (alternating pattern)
+                            for (let x = minX; x < maxX; x += stripWidth * 2) {
+                                for (let y = minY; y < maxY; y += stripWidth * 3) {
+                                    const offset = ((x - minX) / (stripWidth * 2)) % 2 === 0 ? 0 : stripWidth * 1.5;
+                                    context.fillStyle = colors[Math.floor((x / (stripWidth * 2)) % colors.length)];
+                                    context.fillRect(x, y + offset, stripWidth, stripWidth * 1.5);
+                                }
+                            }
+                        }
+                    });
+                    
+                    context.restore();
+                });
 
                 Events.on(render, 'afterRender', () => {
                     const context = render.context;
