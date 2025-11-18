@@ -916,7 +916,7 @@
                             if (pattern) {
                                 context.save();
                                 context.translate(body.position.x, body.position.y);
-                                context.rotate(body.angle);
+                                //context.rotate(body.angle);
                                 context.fillStyle = pattern;
                                 context.fillRect(
                                     -boxWidth / 2,
@@ -932,7 +932,7 @@
                             if (pattern) {
                                 context.save();
                                 context.translate(body.position.x, body.position.y);
-                                context.rotate(body.angle);
+                                //context.rotate(body.angle);
                                 context.fillStyle = pattern;
                                 // Draw the main side wall
                                 context.fillRect(
@@ -947,7 +947,7 @@
                             // Top of sides: weave_ends.jpg (drawn at the top of each side wall)
                             context.save();
                             context.translate(body.position.x, body.position.y);
-                            context.rotate(body.angle);
+                            //context.rotate(body.angle);
                             // Draw the end cap at the top of the side wall
                             const endHeight = weaveEndsImg.height * (wallThickness / weaveEndsImg.width); // Scale to match wall width
                             context.drawImage(
