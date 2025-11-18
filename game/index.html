@@ -604,11 +604,16 @@
                             const img = fruitImages[body.fruitLevel];
                             
                             if (img && img.complete) {
-                                const size = scaledRadius * 2;
+                                // Increase image size to 2.4x the radius to fill the circle better
+                                const imageSize = scaledRadius * 2.4;
+                                const offset = imageSize / 2;
                                 context.save();
                                 context.translate(body.position.x, body.position.y);
                                 context.rotate(body.angle);
-                                context.drawImage(img, -scaledRadius, -scaledRadius, size, size);
+                                // Enable image smoothing for better quality
+                                context.imageSmoothingEnabled = true;
+                                context.imageSmoothingQuality = 'high';
+                                context.drawImage(img, -offset, -offset, imageSize, imageSize);
                                 context.restore();
                             }
                         }
@@ -633,7 +638,10 @@
                     restitution: 0.2,
                     density: 0.001,
                     render: {
-                        fillStyle: fruitData.color
+                        // Make circle transparent so only the image shows
+                        fillStyle: 'transparent',
+                        strokeStyle: 'transparent',
+                        lineWidth: 0
                     },
                     ...options
                 };
@@ -649,13 +657,15 @@
                 
                 previewFruitEl.style.width = `${scaledRadius * 2}px`;
                 previewFruitEl.style.height = `${scaledRadius * 2}px`;
-                previewFruitEl.style.backgroundColor = fruitData.color;
+                // Make preview background transparent
+                previewFruitEl.style.backgroundColor = 'transparent';
                 
                 // Use image instead of emoji
                 const img = fruitImages[currentFruitLevel];
                 if (img && img.complete) {
                     previewFruitEl.style.backgroundImage = `url('${fruitData.imagePath}')`;
-                    previewFruitEl.style.backgroundSize = 'contain';
+                    // Scale up the background image to fill more of the circle (120%)
+                    previewFruitEl.style.backgroundSize = '120%';
                     previewFruitEl.style.backgroundPosition = 'center';
                     previewFruitEl.style.backgroundRepeat = 'no-repeat';
                     previewFruitEl.textContent = '';
