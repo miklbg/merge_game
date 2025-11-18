@@ -623,16 +623,31 @@
                             const img = fruitImages[body.fruitLevel];
                             
                             if (img && img.complete) {
-                                // Increase image size to 3x the radius to fill the circle better
-                                const imageSize = scaledRadius * 2;
-                                const offset = imageSize / 2;
+                                // Calculate dimensions preserving aspect ratio
+                                const containerSize = scaledRadius * 2;
+                                const imgAspect = img.width / img.height;
+                                
+                                let drawWidth, drawHeight;
+                                if (imgAspect > 1) {
+                                    // Wider than tall
+                                    drawWidth = containerSize;
+                                    drawHeight = containerSize / imgAspect;
+                                } else {
+                                    // Taller than wide or square
+                                    drawHeight = containerSize;
+                                    drawWidth = containerSize * imgAspect;
+                                }
+                                
+                                const offsetX = drawWidth / 2;
+                                const offsetY = drawHeight / 2;
+                                
                                 context.save();
                                 context.translate(body.position.x, body.position.y);
                                 context.rotate(body.angle);
                                 // Enable image smoothing for better quality
                                 context.imageSmoothingEnabled = true;
                                 context.imageSmoothingQuality = 'high';
-                                context.drawImage(img, -offset, -offset, imageSize, imageSize);
+                                context.drawImage(img, -offsetX, -offsetY, drawWidth, drawHeight);
                                 context.restore();
                             }
                         }
@@ -683,8 +698,8 @@
                 const img = fruitImages[currentFruitLevel];
                 if (img && img.complete) {
                     previewFruitEl.style.backgroundImage = `url('${fruitData.imagePath}')`;
-                    // Scale up the background image to match dropped fruit size (150% of diameter = 3x radius)
-                    previewFruitEl.style.backgroundSize = '90%';
+                    // Use 'contain' to preserve aspect ratio
+                    previewFruitEl.style.backgroundSize = 'contain';
                     previewFruitEl.style.backgroundPosition = 'center';
                     previewFruitEl.style.backgroundRepeat = 'no-repeat';
                     previewFruitEl.textContent = '';
