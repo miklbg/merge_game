@@ -36,6 +36,9 @@
             gap: 0;
             /* Use either max-width or max-height to constrain */
             width: min(100vw, 100vh * 2 / 3);
+            /* Ensure the container fits within viewport height */
+            max-height: 100vh;
+            height: 100vh;
         }
 
         #game-wrapper {
@@ -44,6 +47,9 @@
             /* --- FIX: Enforce 2:3 aspect ratio --- */
             aspect-ratio: 2 / 3;
             width: 100%;
+            /* Flex shrink to fit within container */
+            flex: 1 1 auto;
+            min-height: 0;
             /* --- FIX: Bright wrapper background --- */
             background-color: #fff7ed; /* bg-orange-50 */
             overflow: hidden;
@@ -167,17 +173,20 @@
             justify-content: center;
             align-items: center;
             gap: 4px;
-            overflow-x: auto;
+            overflow-x: hidden;
             overflow-y: hidden;
             pointer-events: none;
             border-radius: 0 0 12px 12px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            flex-shrink: 0;
         }
         
         .evolution-fruit {
-            flex-shrink: 0;
+            flex-shrink: 1;
+            min-width: 20px;
             width: 40px;
             height: 40px;
+            max-width: 40px;
             border-radius: 50%;
             background-size: contain;
             background-position: center;
@@ -194,6 +203,11 @@
         .evolution-fruit.unlocked {
             filter: none;
             opacity: 1;
+        }
+        
+        .evolution-fruit.current-game-locked {
+            filter: blur(4px) grayscale(0.5);
+            opacity: 0.4;
         }
     </style>
 </head>
@@ -368,6 +382,7 @@
             let currentPreviewX = 0; 
             let saveCounter = 0; 
             let achievedFruits = new Set(); // Track which fruit levels have been achieved 
+            let currentGameMaxFruit = -1; // Track the maximum fruit level achieved in the current game session
             
             let bodiesToRemoveSet = new Set();
             let bodiesToAddArray = [];
@@ -536,15 +551,23 @@
                     fruitIcon.style.backgroundImage = `url('${fruit.imagePath}')`;
                     fruitIcon.setAttribute('data-level', index);
                     
-                    // Check if fruit has been achieved
+                    // Check if fruit has been achieved in all-time
                     if (achievedFruits.has(index)) {
                         fruitIcon.classList.add('unlocked');
                     } else {
                         fruitIcon.classList.add('locked');
                     }
                     
+                    // Additionally blur fruits larger than current game max
+                    if (index > currentGameMaxFruit) {
+                        fruitIcon.classList.add('current-game-locked');
+                    }
+                    
                     fruitEvolutionRow.appendChild(fruitIcon);
                 });
+                
+                // Scale icons to fit in one row
+                scaleEvolutionIcons();
             }
             
             // --- Update Evolution Row ---
@@ -552,6 +575,11 @@
                 // Mark this fruit level and all lower levels as achieved
                 for (let i = 0; i <= fruitLevel; i++) {
                     achievedFruits.add(i);
+                }
+                
+                // Update the current game maximum
+                if (fruitLevel > currentGameMaxFruit) {
+                    currentGameMaxFruit = fruitLevel;
                 }
                 
                 // Save achievements to localStorage
@@ -564,6 +592,35 @@
                         icon.classList.remove('locked');
                         icon.classList.add('unlocked');
                     }
+                    
+                    // Blur fruits larger than current game max
+                    if (index > currentGameMaxFruit) {
+                        icon.classList.add('current-game-locked');
+                    } else {
+                        icon.classList.remove('current-game-locked');
+                    }
+                });
+            }
+            
+            // --- Scale Evolution Icons to fit in one row ---
+            function scaleEvolutionIcons() {
+                const rowWidth = fruitEvolutionRow.clientWidth;
+                const numFruits = FRUITS.length;
+                const gap = 4; // gap between icons in pixels
+                const padding = 16; // 8px padding on each side
+                
+                // Calculate available width for icons
+                const availableWidth = rowWidth - padding - (gap * (numFruits - 1));
+                
+                // Calculate maximum icon size that fits
+                const maxIconSize = Math.min(40, Math.floor(availableWidth / numFruits));
+                
+                // Apply the calculated size to all icons
+                const icons = fruitEvolutionRow.querySelectorAll('.evolution-fruit');
+                icons.forEach(icon => {
+                    icon.style.width = `${maxIconSize}px`;
+                    icon.style.height = `${maxIconSize}px`;
+                    icon.style.maxWidth = `${maxIconSize}px`;
                 });
             }
             
@@ -628,6 +685,7 @@
                 isGameOver = false;
                 isDropping = false;
                 saveCounter = 0;
+                currentGameMaxFruit = -1; // Reset current game max on new game
                 
                 highScore = parseInt(localStorage.getItem(HIGHSCORE_KEY) || '0');
                 highScoreEl.textContent = highScore;
@@ -711,7 +769,7 @@
                         Body.setAngularVelocity(body, fruit.angularVelocity);
                         World.add(world, body);
                         
-                        // Mark this fruit level as achieved
+                        // Mark this fruit level as achieved and update current game max
                         updateEvolutionRow(fruit.level);
                     });
                     score = loadedState.score;
@@ -729,7 +787,7 @@
                         spawnNextFruit(); 
                     }
                     
-                    // Also mark the next fruit as achieved
+                    // Also mark the next fruit as achieved and update current game max
                     updateEvolutionRow(nextFruitLevel);
                     
                     spawnCurrentFruit(); 
@@ -1278,11 +1336,15 @@
                             }
                             
                             initGame();
+                        } else if (entry.target === fruitEvolutionRow) {
+                            // Rescale icons when row size changes
+                            scaleEvolutionIcons();
                         }
                     }
                 });
                 
                 resizeObserver.observe(gameWrapper);
+                resizeObserver.observe(fruitEvolutionRow);
             }
             
             // --- Handle Page Visibility/Focus Changes ---
