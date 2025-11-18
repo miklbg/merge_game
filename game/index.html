@@ -102,6 +102,7 @@
             border-radius: 3px;
             overflow: hidden;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            display: none; /* Hide cooldown indicator */
         }
 
         #cooldown-progress {
@@ -1095,7 +1096,7 @@
                         previewFruitEl.style.opacity = '0.8';
                         isDropping = false;
                     }
-                }, 300);
+                }, DROP_COOLDOWN_MS); // Show preview fruit only after cooldown completes
             }
 
             // --- Cooldown Indicator Functions ---
