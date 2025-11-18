@@ -11,10 +11,7 @@ Background music is sourced from Pixabay:
 - **Track:** Children Music Loop Creative Fun
 - **Source:** https://pixabay.com/music/happy-childrens-tunes-children-music-loop-creative-fun-262427/
 - **License:** Pixabay License - Free for commercial and non-commercial use
-
-To set up the background music:
-1. Download the MP3 file from the link above
-2. Save it as `game/assets/background-music.mp3`
+- **File:** `game/assets/children-music-loop-creative-fun-262427.mp3`
 
 ### Audio Features
 - **Drop Sound**: A descending tone played when fruits are released

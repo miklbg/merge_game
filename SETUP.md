@@ -2,25 +2,20 @@
 
 ## Background Music Setup
 
-Due to network restrictions in the development environment, the background music file needs to be manually downloaded and placed in the correct location.
+The background music file has been uploaded to the repository.
 
-### Steps to Complete Setup:
+### File Location:
 
-1. **Download the background music:**
-   - Visit: https://pixabay.com/music/happy-childrens-tunes-children-music-loop-creative-fun-262427/
-   - Click the download button to get the MP3 file
-   - The file will be named something like `children-music-loop-creative-fun-262427.mp3`
+- **Path:** `game/assets/children-music-loop-creative-fun-262427.mp3`
+- **Source:** https://pixabay.com/music/happy-childrens-tunes-children-music-loop-creative-fun-262427/
+- **License:** Pixabay License - Free for commercial and non-commercial use
 
-2. **Place the file in the correct location:**
-   - Rename the downloaded file to `background-music.mp3`
-   - Place it in the `game/assets/` directory
-   - Final path should be: `game/assets/background-music.mp3`
+### Verify the setup:
 
-3. **Verify the setup:**
-   - Open `game/index.html` in a web browser
-   - The background music should start playing automatically (browser may require user interaction first)
-   - When you switch tabs or apps, the music should pause
-   - When you return to the game tab, the music should resume
+1. Open `game/index.html` in a web browser
+2. The background music should start playing automatically (browser may require user interaction first)
+3. When you switch tabs or apps, the music should pause
+4. When you return to the game tab, the music should resume
 
 ## Features Implemented
 

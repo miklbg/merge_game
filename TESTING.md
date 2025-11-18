@@ -2,16 +2,10 @@
 
 ## How to Test the Implementation
 
-### 1. Download the Background Music
+### 1. Background Music File
 
-**Quick Method:**
-```bash
-# Visit this URL in your browser:
-https://pixabay.com/music/happy-childrens-tunes-children-music-loop-creative-fun-262427/
-
-# Click the download button
-# Save as: game/assets/background-music.mp3
-```
+The background music file is already included in the repository at:
+`game/assets/children-music-loop-creative-fun-262427.mp3`
 
 ### 2. Test the Game
 
@@ -63,14 +57,14 @@ Once the game is running with the music file:
 To verify error handling works:
 ```bash
 # Temporarily rename the music file
-mv game/assets/background-music.mp3 game/assets/background-music.mp3.bak
+mv game/assets/children-music-loop-creative-fun-262427.mp3 game/assets/children-music-loop-creative-fun-262427.mp3.bak
 
 # Open the game - it should still work
 # Check browser console for warning message
 # Sound effects should still play
 
 # Restore the file
-mv game/assets/background-music.mp3.bak game/assets/background-music.mp3
+mv game/assets/children-music-loop-creative-fun-262427.mp3.bak game/assets/children-music-loop-creative-fun-262427.mp3
 ```
 
 ### Expected Behavior
@@ -102,7 +96,7 @@ Look for these messages to verify everything is working:
 ### Troubleshooting
 
 **Music doesn't play:**
-- Check if file exists at `game/assets/background-music.mp3`
+- Check if file exists at `game/assets/children-music-loop-creative-fun-262427.mp3`
 - Check browser console for errors
 - Try clicking on the game (autoplay may require user interaction)
 - Check browser's autoplay settings
