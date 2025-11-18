@@ -605,6 +605,8 @@
             // --- Scale Evolution Icons to fit in one row ---
             function scaleEvolutionIcons() {
                 const rowWidth = fruitEvolutionRow.clientWidth;
+                if (!rowWidth || rowWidth === 0) return; // Guard against zero width
+                
                 const numFruits = FRUITS.length;
                 const gap = 4; // gap between icons in pixels
                 const padding = 16; // 8px padding on each side
@@ -612,8 +614,9 @@
                 // Calculate available width for icons
                 const availableWidth = rowWidth - padding - (gap * (numFruits - 1));
                 
-                // Calculate maximum icon size that fits
-                const maxIconSize = Math.min(40, Math.floor(availableWidth / numFruits));
+                // Calculate maximum icon size that fits, with minimum of 20px
+                const calculatedSize = Math.floor(availableWidth / numFruits);
+                const maxIconSize = Math.max(20, Math.min(40, calculatedSize));
                 
                 // Apply the calculated size to all icons
                 const icons = fruitEvolutionRow.querySelectorAll('.evolution-fruit');
