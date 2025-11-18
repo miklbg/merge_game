@@ -432,6 +432,7 @@
             const HIGHSCORE_KEY = 'fruit-merge-highscore';
             const GAME_STATE_KEY = 'fruit-merge-gamestate';
             const ACHIEVEMENTS_KEY = 'fruit-merge-achievements';
+            const AUDIO_PREFS_KEY = 'fruit-merge-audio-prefs';
             
             // Preload fruit images
             const fruitImages = {};
@@ -721,6 +722,31 @@
                     achievedFruits = new Set([0]);
                 }
             } 
+            
+            // --- Save Audio Preferences ---
+            function saveAudioPreferences() {
+                const audioPrefs = {
+                    isMusicEnabled: isMusicEnabled,
+                    areSoundsEnabled: areSoundsEnabled
+                };
+                localStorage.setItem(AUDIO_PREFS_KEY, JSON.stringify(audioPrefs));
+            }
+            
+            // --- Load Audio Preferences ---
+            function loadAudioPreferences() {
+                const savedPrefs = localStorage.getItem(AUDIO_PREFS_KEY);
+                if (savedPrefs) {
+                    try {
+                        const audioPrefs = JSON.parse(savedPrefs);
+                        isMusicEnabled = audioPrefs.isMusicEnabled !== undefined ? audioPrefs.isMusicEnabled : true;
+                        areSoundsEnabled = audioPrefs.areSoundsEnabled !== undefined ? audioPrefs.areSoundsEnabled : true;
+                    } catch (e) {
+                        console.error("Could not parse saved audio preferences:", e);
+                        isMusicEnabled = true;
+                        areSoundsEnabled = true;
+                    }
+                }
+            }
 
             
             // --- ROBUST STARTUP ---
@@ -746,6 +772,9 @@
             function initGame() {
                 // Load achievements first
                 loadAchievements();
+                
+                // Load audio preferences
+                loadAudioPreferences();
                 
                 headerHeight = headerEl.clientHeight;
                 boxWidth = gameWrapper.clientWidth; 
@@ -1371,6 +1400,9 @@
                 isMusicEnabled = !isMusicEnabled;
                 musicStatus.textContent = isMusicEnabled ? 'On' : 'Off';
                 
+                // Save audio preferences
+                saveAudioPreferences();
+                
                 if (isMusicEnabled) {
                     // Enable music - start playing if not in pause menu and not game over
                     if (pauseModal.classList.contains('hidden') && !isGameOver) {
@@ -1388,6 +1420,9 @@
             function toggleSounds() {
                 areSoundsEnabled = !areSoundsEnabled;
                 soundsStatus.textContent = areSoundsEnabled ? 'On' : 'Off';
+                
+                // Save audio preferences
+                saveAudioPreferences();
             }
             
             // --- Restart from Pause Menu ---
@@ -1710,7 +1745,7 @@
                     restartMenuButton.classList.add('hidden');
                 }
                 
-                // Initialize audio toggle states
+                // Initialize audio toggle states from loaded preferences
                 musicStatus.textContent = isMusicEnabled ? 'On' : 'Off';
                 soundsStatus.textContent = areSoundsEnabled ? 'On' : 'Off';
                 
