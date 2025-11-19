@@ -874,8 +874,8 @@
                     element: canvasWrapper, 
                     engine: engine,
                     options: {
-                        width: viewportWidth,
-                        height: viewportHeight,
+                        width: gameWorldWidth,
+                        height: gameWorldHeight,
                         wireframes: false,
                         /* Transparent background to show weave_background.png */
                         background: 'transparent'
@@ -1781,12 +1781,13 @@
                 confettiContainer.style.width = `${viewportWidth}px`;
                 confettiContainer.style.left = `${(wrapperWidth - viewportWidth) / 2}px`;
                 
-                // Update the canvas dimensions
+                // Update the canvas dimensions - keep at game world size, let CSS scale
                 if (render && render.canvas) {
-                    render.canvas.width = viewportWidth;
-                    render.canvas.height = viewportHeight;
-                    render.options.width = viewportWidth;
-                    render.options.height = viewportHeight;
+                    // Canvas internal size stays at game world dimensions
+                    render.canvas.width = gameWorldWidth;
+                    render.canvas.height = gameWorldHeight;
+                    render.options.width = gameWorldWidth;
+                    render.options.height = gameWorldHeight;
                     // Keep bounds fixed to game world size
                     render.bounds.min.x = 0;
                     render.bounds.min.y = 0;
