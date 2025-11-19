@@ -1078,16 +1078,17 @@
                             if (pattern) {
                                 // Transform pattern to align with the body's position in matter.js coordinates
                                 const matrix = new DOMMatrix();
-                                matrix.translateSelf(body.position.x - gameWorldWidth / 2, body.position.y);
+                                // Fix: Start from top edge of the wall (body.position.y - wallThickness / 2)
+                                matrix.translateSelf(body.position.x - gameWorldWidth / 2, body.position.y - wallThickness / 2);
                                 pattern.setTransform(matrix);
                                 
                                 context.globalAlpha = 0.9; // Apply transparency
                                 context.fillStyle = pattern;
                                 
-                                // Draw floor texture at the body's position
+                                // Draw floor texture at the top edge of the wall body
                                 context.fillRect(
                                     body.position.x - gameWorldWidth / 2,
-                                    body.position.y,
+                                    body.position.y - wallThickness / 2,
                                     gameWorldWidth,
                                     wallThickness
                                 );
@@ -1103,8 +1104,11 @@
                                 context.save();
                                 
                                 // Transform pattern to align with the body's position in matter.js coordinates
+                                // Scale the pattern to fit the wall width (weaveSidesImg is 175px, wall is 120px)
+                                const scaleX = wallThickness / weaveSidesImg.width;
                                 const matrix = new DOMMatrix();
                                 matrix.translateSelf(body.position.x - wallThickness / 2, body.position.y - wallHeight / 2);
+                                matrix.scaleSelf(scaleX, 1); // Scale horizontally to fit wall width
                                 pattern.setTransform(matrix);
                                 
                                 context.globalAlpha = 0.9; // Apply transparency
