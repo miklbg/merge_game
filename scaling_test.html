@@ -89,58 +89,58 @@
 </head>
 <body>
     <div class="container">
-        <h1>🍉 Game Scaling Test - Fixed Game World</h1>
+        <h1>🍉 Game Scaling Test - Fixed Game World (3x Scale)</h1>
         
         <div class="explanation">
-            <h2>How the new scaling works:</h2>
+            <h2>How the scaling works (Updated for 3x Native Scale):</h2>
             <ul>
-                <li><strong>Game World (Blue):</strong> Always 400×600px - this is where physics happens</li>
+                <li><strong>Game World (Blue):</strong> Always 1200×1800px - this is where physics happens (3x the original design)</li>
                 <li><strong>Viewport (Orange):</strong> Variable size - what the user sees</li>
-                <li><strong>Fruit (Red):</strong> Always 40px in game world - appears different sizes in viewport</li>
+                <li><strong>Fruit (Red):</strong> Always 120px in game world (3x original 40px) - appears different sizes in viewport</li>
             </ul>
-            <p><strong>Key Point:</strong> The fruit is always the same size in the game world (40px), but appears larger or smaller depending on the viewport size. The physics simulation always works at the same scale.</p>
+            <p><strong>Key Point:</strong> The fruit is always the same size in the game world (120px at 3x scale), but appears larger or smaller depending on the viewport size. The physics simulation always works at the same scale. The 3x increase provides much sharper graphics!</p>
         </div>
 
         <div class="test-area">
             <!-- Small viewport -->
             <div class="viewport" style="width: 200px; height: 300px;">
                 <div class="viewport-label">Small (200×300)</div>
-                <div class="game-world" style="width: 200px; height: 300px; transform: scale(0.5); transform-origin: top left;">
-                    <div class="fruit">🍓</div>
-                    <div class="info">Fruit: 40px in world<br>(20px in viewport)</div>
+                <div class="game-world" style="width: 200px; height: 300px; transform: scale(0.1667); transform-origin: top left;">
+                    <div class="fruit" style="width: 120px; height: 120px; line-height: 120px; font-size: 60px;">🍓</div>
+                    <div class="info">Fruit: 120px in world<br>(20px in viewport)</div>
                 </div>
                 <div class="dimensions">
                     Viewport: 200×300<br>
-                    Game World: 400×600<br>
-                    Scale: 0.5x
+                    Game World: 1200×1800<br>
+                    Scale: 0.167x (1/6)
                 </div>
             </div>
 
             <!-- Medium viewport -->
             <div class="viewport" style="width: 400px; height: 600px;">
                 <div class="viewport-label">Medium (400×600)</div>
-                <div class="game-world" style="width: 400px; height: 600px;">
-                    <div class="fruit">🍓</div>
-                    <div class="info">Fruit: 40px in world<br>(40px in viewport)</div>
+                <div class="game-world" style="width: 400px; height: 600px; transform: scale(0.333); transform-origin: top left;">
+                    <div class="fruit" style="width: 120px; height: 120px; line-height: 120px; font-size: 60px;">🍓</div>
+                    <div class="info">Fruit: 120px in world<br>(40px in viewport)</div>
                 </div>
                 <div class="dimensions">
                     Viewport: 400×600<br>
-                    Game World: 400×600<br>
-                    Scale: 1.0x
+                    Game World: 1200×1800<br>
+                    Scale: 0.333x (1/3)
                 </div>
             </div>
 
             <!-- Large viewport -->
             <div class="viewport" style="width: 600px; height: 900px;">
                 <div class="viewport-label">Large (600×900)</div>
-                <div class="game-world" style="width: 600px; height: 900px; transform: scale(1.5); transform-origin: top left;">
-                    <div class="fruit">🍓</div>
-                    <div class="info">Fruit: 40px in world<br>(60px in viewport)</div>
+                <div class="game-world" style="width: 600px; height: 900px; transform: scale(0.5); transform-origin: top left;">
+                    <div class="fruit" style="width: 120px; height: 120px; line-height: 120px; font-size: 60px;">🍓</div>
+                    <div class="info">Fruit: 120px in world<br>(60px in viewport)</div>
                 </div>
                 <div class="dimensions">
                     Viewport: 600×900<br>
-                    Game World: 400×600<br>
-                    Scale: 1.5x
+                    Game World: 1200×1800<br>
+                    Scale: 0.5x (1/2)
                 </div>
             </div>
         </div>
@@ -160,8 +160,8 @@
 
     <script>
         // Log coordinate conversion test
-        const NATIVE_WIDTH = 400;
-        const NATIVE_HEIGHT = 600;
+        const NATIVE_WIDTH = 1200;  // Updated to 3x scale
+        const NATIVE_HEIGHT = 1800; // Updated to 3x scale
         
         function testConversion(viewportWidth, viewportHeight) {
             const viewportToWorldX = (vx) => (vx / viewportWidth) * NATIVE_WIDTH;
@@ -173,10 +173,10 @@
             
             console.log(`Viewport ${viewportWidth}×${viewportHeight}:`);
             console.log(`  Center: ${centerViewport}px (viewport) → ${centerWorld}px (world) → ${backToViewport}px (viewport)`);
-            console.log(`  ✓ World center is always 200px: ${centerWorld === 200}`);
+            console.log(`  ✓ World center is always 600px: ${centerWorld === 600}`);
         }
         
-        console.log("Coordinate Conversion Tests:");
+        console.log("Coordinate Conversion Tests (3x Scale):");
         testConversion(200, 300);
         testConversion(400, 600);
         testConversion(600, 900);
