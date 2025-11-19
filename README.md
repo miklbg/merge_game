@@ -22,6 +22,7 @@ The game features 10 fruit levels that merge progressively, now with beautiful c
 
 ## ✨ Features
 
+- **High-Quality Graphics**: 3x native resolution (1200×1800px) for crisp, sharp rendering on all displays
 - **Physics Engine**: Realistic fruit physics powered by Matter.js
 - **Responsive Design**: Works on desktop and mobile devices
 - **Score Tracking**: Keep track of your high score with localStorage
