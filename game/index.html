@@ -1578,16 +1578,16 @@
                     
                     // --- Warning Zone Detection ---
                     if (!isGameOver) {
-                        // Define warning zone as area above red line (with some margin)
-                        const warningZoneHeight = gameWorldHeight * 0.10; // 10% of game height as warning zone
-                        const warningZoneTop = gameOverLineY - warningZoneHeight;
+                        // Define warning zone as area below red line at 90% of available height
+                        const availableHeight = gameWorldHeight - gameOverLineY; // Height from red line to bottom
+                        const warningLevel = gameOverLineY + (availableHeight * 0.90); // 90% of available height
                         
                         // Check if any stationary fruits are in the warning zone
                         const fruitsInWarningZone = Composite.allBodies(world).filter(body => {
                             if (body.label !== 'fruit') return false;
                             
-                            // Check if fruit center is in warning zone (above the red line but close to it)
-                            const isInWarningZone = body.position.y >= warningZoneTop && body.position.y < gameOverLineY;
+                            // Check if fruit center is in warning zone (at or above 90% fill level)
+                            const isInWarningZone = body.position.y >= warningLevel;
                             
                             // Only count fruits that are relatively stationary
                             const isRelativelyStationary = Math.abs(body.velocity.y) < 2.0;
