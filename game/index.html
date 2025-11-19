@@ -1230,6 +1230,14 @@
                 const fruitData = FRUITS[level];
                 if (!fruitData) return null;
 
+                // Convert hex color to rgba with transparency
+                const hexToRgba = (hex, alpha) => {
+                    const r = parseInt(hex.slice(1, 3), 16);
+                    const g = parseInt(hex.slice(3, 5), 16);
+                    const b = parseInt(hex.slice(5, 7), 16);
+                    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+                };
+
                 const bodyOptions = {
                     label: 'fruit',
                     fruitLevel: level,
@@ -1237,8 +1245,8 @@
                     restitution: 0.2,
                     density: 0.001,
                     render: {
-                        // Make circle slightly visible with semi-transparent fill
-                        fillStyle: 'rgba(0, 0, 0, 0.2)',
+                        // Make circle slightly visible with semi-transparent fill using fruit's color
+                        fillStyle: hexToRgba(fruitData.color, 0.1),
                         strokeStyle: 'transparent',
                         lineWidth: 0
                     },
