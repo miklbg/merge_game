@@ -7,16 +7,34 @@ The Fruit Merge Game uses a dual coordinate system to maintain consistent physic
 ## Coordinate Systems
 
 ### 1. Game World Coordinates
-- **Fixed size:** 400px × 600px (width × height)
+- **Fixed size:** 1200px × 1800px (width × height) - **3x native scale for high-quality graphics**
+- **Base scale:** 400px × 600px (logical units)
 - **Aspect ratio:** 2:3
 - **Purpose:** All physics simulations occur in this space
 - **Physics bodies:** All fruits, walls, and game elements use these coordinates
+- **Graphics quality:** Higher resolution eliminates pixelation seen at lower scales
 
 ### 2. Viewport Coordinates
 - **Variable size:** Matches the canvas size on screen
 - **Aspect ratio:** Always 2:3 (enforced by JavaScript)
 - **Purpose:** Display rendering and user input
 - **Scaling:** Matter.js automatically scales game world to fit viewport
+
+## Graphics Improvements (v2.0)
+
+### Native Scale Increase
+- **Previous:** 400×600px (1x scale) - appeared pixelated on modern displays
+- **Current:** 1200×1800px (3x scale) - sharp, high-quality rendering
+- **Benefits:**
+  - Eliminates pixelation and blurriness
+  - Better utilizes high-quality PNG assets (~600-800px resolution)
+  - Provides crisp rendering on retina/high-DPI displays
+  - No performance impact due to CSS scaling
+
+### Image Rendering Quality
+- **Canvas rendering:** High-quality image smoothing enabled (`imageSmoothingQuality: 'high'`)
+- **CSS rendering:** Auto image-rendering for smooth scaling
+- **Background textures:** Scaled 3x to match native resolution
 
 ## Coordinate Conversion
 
@@ -82,11 +100,44 @@ This ensures:
 ## Key Constants
 
 ```javascript
-const NATIVE_WIDTH = 400;  // Game world width
-const NATIVE_HEIGHT = 600; // Game world height
-const gameWorldWidth = 400;
-const gameWorldHeight = 600;
+const NATIVE_SCALE = 3;           // Scale multiplier for high-quality rendering
+const NATIVE_WIDTH = 1200;        // Game world width (400 * 3)
+const NATIVE_HEIGHT = 1800;       // Game world height (600 * 3)
+const gameWorldWidth = 1200;
+const gameWorldHeight = 1800;
 ```
+
+## Fruit Sizes and PNG Recommendations
+
+### Current Fruit Sizes (in game world)
+After 3x scaling, fruits render at these diameters:
+- Blueberry (level 0): 132px diameter (66px radius)
+- Strawberry (level 1): 156px diameter (78px radius)
+- Grapes (level 2): 204px diameter (102px radius)
+- Orange (level 3): 228px diameter (114px radius)
+- Apple (level 4): 288px diameter (144px radius)
+- Lemon (level 5): 348px diameter (174px radius)
+- Cantaloupe (level 6): 396px diameter (198px radius)
+- Pineapple (level 7): 468px diameter (234px radius)
+- Coconut (level 8): 540px diameter (270px radius)
+- Watermelon (level 9): 612px diameter (306px radius)
+
+### PNG Asset Recommendations
+
+**Current PNG assets** (~600-800px) are already well-sized for the 3x scale!
+
+**Optimal sizes for best quality:**
+- For fruits at 3x scale (current), your PNGs should ideally be 1.5-2x the rendered size
+- Current assets (600-800px) work well for fruits up to ~400px diameter
+- For the largest fruit (watermelon at 612px), consider 900-1200px PNGs for absolute sharpness
+- However, current quality is already very good - **no immediate changes needed**
+
+**If you want to optimize:**
+- Small fruits (blueberry-grapes): 256-512px PNGs (current 600-800px is fine, just slightly overkill)
+- Medium fruits (orange-lemon): 512-768px PNGs (current assets are perfect)
+- Large fruits (cantaloupe-watermelon): 768-1200px PNGs (current 600-800px could be slightly larger)
+
+**Recommendation:** Keep your current PNG assets as-is. They provide excellent quality at 3x scale. Only consider upgrading if you increase NATIVE_SCALE to 4x or higher.
 
 ## Examples
 
