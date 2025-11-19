@@ -39,8 +39,11 @@
             flex-direction: column;
             align-items: center;
             gap: 0;
-            /* Use either max-width or max-height to constrain */
-            width: min(100vw, 100vh * 2 / 3);
+            /* Limit width to maintain reasonable aspect ratio for 2:3 game area plus evolution row */
+            /* In landscape, this ensures game doesn't get too wide */
+            width: 100%;
+            max-width: min(100vw, calc(100vh * 2 / 3));
+            max-width: min(100vw, calc(100dvh * 2 / 3));
             /* Ensure the container fits within viewport height - use 100dvh for better mobile support */
             max-height: 100vh;
             max-height: 100dvh; /* Dynamic viewport height for mobile browsers */
