@@ -251,8 +251,9 @@
         
         #booster-indicator {
             position: absolute;
-            top: 8px;
-            left: 8px;
+            /* Position will be set dynamically by JavaScript */
+            left: 50%;
+            transform: translateX(-50%);
             z-index: 25;
             width: 40px;
             height: 40px;
@@ -262,7 +263,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.3s ease, top 0.3s ease;
             pointer-events: none;
         }
         
@@ -554,6 +555,14 @@
                 } else {
                     boosterIndicator.classList.remove('disabled');
                 }
+            }
+            
+            // --- Update Booster Indicator Position ---
+            function updateBoosterIndicatorPosition() {
+                // Position the indicator centered between the bottom of the header and the red line
+                const gameOverLineViewportY = worldToViewportY(gameOverLineY);
+                const centerY = headerHeight + (gameOverLineViewportY / 2);
+                boosterIndicator.style.top = `${centerY}px`;
             }
 
             // --- Audio System ---
@@ -1273,6 +1282,9 @@
 
                     context.restore(); 
                 });
+                
+                // Update booster indicator position
+                updateBoosterIndicatorPosition();
                 
                 addEventListeners();
             }
@@ -2056,6 +2068,9 @@
                 if (!isGameOver && !isDropping) {
                     spawnCurrentFruit();
                 }
+                
+                // Update booster indicator position after resize
+                updateBoosterIndicatorPosition();
                 
                 // No need to save game state on resize - game world is unchanged
             }
