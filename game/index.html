@@ -928,20 +928,25 @@
                     bodies.forEach(body => {
                         if (body.label === 'ground' && weaveBottomImg.complete) {
                             // Floor: weave_bottom.jpg (repeat-x)
+                            context.save();
+                            context.translate(body.position.x, body.position.y);
+                            
+                            // Create pattern and align it to the top of the floor
                             const pattern = context.createPattern(weaveBottomImg, 'repeat-x');
                             if (pattern) {
-                                context.save();
-                                context.translate(body.position.x, body.position.y);
-                                //context.rotate(body.angle);
+                                context.globalAlpha = 0.9; // Apply transparency
                                 context.fillStyle = pattern;
+                                
+                                // Draw floor texture aligned to the top edge
                                 context.fillRect(
                                     -boxWidth / 2,
                                     -wallThickness / 2,
                                     boxWidth,
                                     wallThickness
                                 );
-                                context.restore();
                             }
+                            context.restore();
+                        }
                         } else if ((body.label === 'wall-left' || body.label === 'wall-right') && weaveSidesImg.complete && weaveEndsImg.complete) {
                             // Calculate actual wall height (from game over line to bottom)
                             const wallHeight = boxHeight - gameOverLineY;
@@ -952,6 +957,7 @@
                                 context.save();
                                 context.translate(body.position.x, body.position.y);
                                 //context.rotate(body.angle);
+                                context.globalAlpha = 0.9; // Apply transparency
                                 context.fillStyle = pattern;
                                 // Draw the main side wall (only up to the red line)
                                 context.fillRect(
@@ -967,6 +973,7 @@
                             context.save();
                             context.translate(body.position.x, body.position.y);
                             //context.rotate(body.angle);
+                            context.globalAlpha = 0.9; // Apply transparency
                             // Draw the end cap at the top of the side wall
                             const endHeight = weaveEndsImg.height * (wallThickness / weaveEndsImg.width); // Scale to match wall width
                             context.drawImage(
