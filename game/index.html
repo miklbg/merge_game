@@ -824,9 +824,9 @@
                 const wallCenterY = gameOverLineY + wallHeight / 2;
                 
                 World.add(world, [
-                    Bodies.rectangle(boxWidth / 2, boxHeight - wallThickness / 2, boxWidth, wallThickness, { ...wallOptions, label: 'ground' }),
-                    Bodies.rectangle(wallThickness / 2, wallCenterY, wallThickness, wallHeight, { ...wallOptions, label: 'wall-left' }),
-                    Bodies.rectangle(boxWidth - wallThickness / 2, wallCenterY, wallThickness, wallHeight, { ...wallOptions, label: 'wall-right' })
+                    Bodies.rectangle(boxWidth / 2, boxHeight, boxWidth, wallThickness, { ...wallOptions, label: 'ground' }),
+                    Bodies.rectangle(0, wallCenterY, wallThickness, wallHeight, { ...wallOptions, label: 'wall-left' }),
+                    Bodies.rectangle(boxWidth, wallCenterY, wallThickness, wallHeight, { ...wallOptions, label: 'wall-right' })
                 ]);
 
                 const gameOverLine = Bodies.rectangle(
@@ -1109,8 +1109,8 @@
                 }
                 
                 const constrainedX = Math.max(
-                    scaledRadius + wallThickness, // Use scaled values
-                    Math.min(boxWidth - scaledRadius - wallThickness, x) // Use scaled values
+                    scaledRadius + wallThickness / 2, // Play area starts at wallThickness/2
+                    Math.min(boxWidth - scaledRadius - wallThickness / 2, x) // Play area ends at boxWidth-wallThickness/2
                 );
                 
                 currentPreviewX = constrainedX;
@@ -1689,7 +1689,7 @@
                     if (!isGameOver) {
                         World.add(world, Bodies.rectangle(
                             boxWidth / 2, 
-                            boxHeight - wallThickness / 2, 
+                            boxHeight, 
                             boxWidth, 
                             wallThickness, 
                             { ...wallOptions, label: 'ground' }
@@ -1702,14 +1702,14 @@
                     
                     World.add(world, [
                         Bodies.rectangle(
-                            wallThickness / 2, 
+                            0, 
                             wallCenterY, 
                             wallThickness, 
                             wallHeight, 
                             { ...wallOptions, label: 'wall-left' }
                         ),
                         Bodies.rectangle(
-                            boxWidth - wallThickness / 2, 
+                            boxWidth, 
                             wallCenterY, 
                             wallThickness, 
                             wallHeight, 
