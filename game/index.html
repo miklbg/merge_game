@@ -98,8 +98,6 @@
         #game-canvas-wrapper {
             position: absolute;
             bottom: 0;
-            left: 0;
-            right: 0;
             z-index: 1;
             background-image: url('assets/weave_background.png');
             background-size: 200px 200px;
@@ -185,8 +183,6 @@
         #confetti-container {
             position: absolute;
             bottom: 0;
-            left: 0;
-            right: 0;
             pointer-events: none;
             overflow: hidden;
             z-index: 15; 
@@ -774,22 +770,34 @@
                 // Load achievements first
                 loadAchievements();
                 
-                // Calculate viewport dimensions to fill available space
+                // Calculate viewport dimensions to maintain 2:3 aspect ratio (matching game world)
                 headerHeight = headerEl.clientHeight;
                 const wrapperWidth = gameWrapper.clientWidth;
                 const wrapperHeight = gameWrapper.clientHeight;
                 const availableHeight = wrapperHeight - headerHeight;
                 
-                // Use full available space for viewport (stretch to fill)
-                viewportWidth = wrapperWidth;
-                viewportHeight = availableHeight;
+                // Ensure viewport maintains 2:3 aspect ratio (same as game world 400:600)
+                // Calculate based on available space while maintaining aspect ratio
+                const aspectRatio = gameWorldWidth / gameWorldHeight; // 2/3
                 
-                // Set canvas wrapper and confetti container to fill available space
+                if (wrapperWidth / availableHeight > aspectRatio) {
+                    // Width is the limiting factor
+                    viewportWidth = Math.floor(availableHeight * aspectRatio);
+                    viewportHeight = availableHeight;
+                } else {
+                    // Height is the limiting factor
+                    viewportWidth = wrapperWidth;
+                    viewportHeight = Math.floor(wrapperWidth / aspectRatio);
+                }
+                
                 canvasWrapper.style.top = `${headerHeight}px`;
+                canvasWrapper.style.height = `${viewportHeight}px`;
+                canvasWrapper.style.width = `${viewportWidth}px`;
+                canvasWrapper.style.left = `${(wrapperWidth - viewportWidth) / 2}px`; // Center if width is limited
                 confettiContainer.style.top = `${headerHeight}px`;
                 confettiContainer.style.height = `${viewportHeight}px`;
                 confettiContainer.style.width = `${viewportWidth}px`;
-                confettiContainer.style.left = `0px`;
+                confettiContainer.style.left = `${(wrapperWidth - viewportWidth) / 2}px`;
 
                 currentPreviewX = gameWorldWidth / 2;
 
@@ -1702,16 +1710,27 @@
                 const wrapperHeight = newHeight;
                 const availableHeight = wrapperHeight - headerHeight;
                 
-                // Use full available space for viewport (stretch to fill)
-                viewportWidth = wrapperWidth;
-                viewportHeight = availableHeight;
+                // Ensure viewport maintains 2:3 aspect ratio (same as game world 400:600)
+                const aspectRatio = gameWorldWidth / gameWorldHeight; // 2/3
                 
-                // Set canvas wrapper and confetti container positions
+                if (wrapperWidth / availableHeight > aspectRatio) {
+                    // Width is the limiting factor
+                    viewportWidth = Math.floor(availableHeight * aspectRatio);
+                    viewportHeight = availableHeight;
+                } else {
+                    // Height is the limiting factor
+                    viewportWidth = wrapperWidth;
+                    viewportHeight = Math.floor(wrapperWidth / aspectRatio);
+                }
+                
                 canvasWrapper.style.top = `${headerHeight}px`;
+                canvasWrapper.style.height = `${viewportHeight}px`;
+                canvasWrapper.style.width = `${viewportWidth}px`;
+                canvasWrapper.style.left = `${(wrapperWidth - viewportWidth) / 2}px`; // Center if width is limited
                 confettiContainer.style.top = `${headerHeight}px`;
                 confettiContainer.style.height = `${viewportHeight}px`;
                 confettiContainer.style.width = `${viewportWidth}px`;
-                confettiContainer.style.left = `0px`;
+                confettiContainer.style.left = `${(wrapperWidth - viewportWidth) / 2}px`;
                 
                 // Update the canvas dimensions
                 if (render && render.canvas) {
