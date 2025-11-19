@@ -31,6 +31,10 @@ The game features 10 fruit levels that merge progressively, now with beautiful c
 - **Audio Feedback**: Sound effects and background music
 - **Smart Controls**: Touch and mouse support with preview positioning
 - **Fruit Evolution Display**: Visual progress bar showing all fruit types at the bottom of the game, with unachieved fruits shown blurred
+- **Red Line Warning System**: Visual and audio alerts when fruits get dangerously close to the game over line
+  - **Pulsing Red Line**: The game over line pulses in thickness and glows when fruits approach
+  - **Warning Sound**: Subtle audio beep alerts you when fruits enter the danger zone
+  - **Smart Detection**: Only triggers for stationary fruits within 10% of the game height above the line
 
 ## 🔊 Audio Attribution
 
@@ -47,6 +51,7 @@ Background music is sourced from Pixabay:
 ### Audio Features
 - **Drop Sound**: A descending tone played when fruits are released
 - **Merge Sound**: A cheerful ascending chime played when fruits merge
+- **Warning Sound**: Two quick beeps (A4 at 440Hz) when fruits enter the danger zone near the red line, with 2-second cooldown
 - **Game Over Sound**: A multi-note descending melody (E4→C4→A3→F3) that plays when the game ends
 - **Background Music**: A continuous looping melody during gameplay that fades out when the game is paused or ended
   - **Volume Control**: Uses Web Audio API GainNode for reliable, cross-browser volume control (default ~0.25 linear, approximately -12dB)

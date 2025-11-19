@@ -11,3 +11,4 @@ test_*.js
 # Node modules and build files
 node_modules/
 package-lock.json
+demo_warning.html
