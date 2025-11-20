@@ -703,13 +703,79 @@
                     
                     // Quick fade in and out
                     gainNode.gain.setValueAtTime(0, audioContext.currentTime + beep.start);
-                    gainNode.gain.linearRampToValueAtTime(0.15, audioContext.currentTime + beep.start + 0.02);
-                    gainNode.gain.setValueAtTime(0.15, audioContext.currentTime + beep.start + beep.duration - 0.02);
+                    gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + beep.start + 0.02);
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime + beep.start + beep.duration - 0.02);
                     gainNode.gain.linearRampToValueAtTime(0.01, audioContext.currentTime + beep.start + beep.duration);
                     
                     oscillator.start(audioContext.currentTime + beep.start);
                     oscillator.stop(audioContext.currentTime + beep.start + beep.duration);
                 });
+            }
+
+            // Play a booster available sound effect (cheerful ascending chime)
+            function playBoosterAvailableSound() {
+                if (!areSoundsEnabled) return; // Check if sounds are enabled
+                initAudioContext();
+                
+                // Create a cheerful "power-up available" sound - ascending notes
+                const notes = [
+                    { freq: 523.25, start: 0.0, duration: 0.1 },   // C5
+                    { freq: 659.25, start: 0.08, duration: 0.1 },  // E5
+                    { freq: 783.99, start: 0.16, duration: 0.15 }  // G5 (longer final note)
+                ];
+                
+                notes.forEach(note => {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    // Use sine wave for a pleasant tone
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(note.freq, audioContext.currentTime + note.start);
+                    
+                    // Fade in and out for smooth sound
+                    const fadeIn = 0.02;
+                    const fadeOut = 0.03;
+                    const noteEnd = note.start + note.duration;
+                    
+                    gainNode.gain.setValueAtTime(0, audioContext.currentTime + note.start);
+                    gainNode.gain.linearRampToValueAtTime(0.25, audioContext.currentTime + note.start + fadeIn);
+                    gainNode.gain.setValueAtTime(0.25, audioContext.currentTime + noteEnd - fadeOut);
+                    gainNode.gain.linearRampToValueAtTime(0.01, audioContext.currentTime + noteEnd);
+                    
+                    oscillator.start(audioContext.currentTime + note.start);
+                    oscillator.stop(audioContext.currentTime + noteEnd);
+                });
+            }
+
+            // Play a booster used sound effect (quick whoosh/power sound)
+            function playBoosterUsedSound() {
+                if (!areSoundsEnabled) return; // Check if sounds are enabled
+                initAudioContext();
+                
+                // Create a quick "whoosh" power-up sound - descending sweep
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                // Use sawtooth for more energetic sound
+                oscillator.type = 'sawtooth';
+                
+                // Sweep from high to low frequency quickly
+                oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.15);
+                
+                // Quick attack and decay
+                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.02);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.15);
             }
 
             // Play a game over sound effect (multi-note descending sequence)
@@ -860,6 +926,7 @@
                 if (fruitLevel >= BOOSTER_UNLOCK_LEVEL && !boosterUnlocked) {
                     boosterUnlocked = true;
                     updateBoosterIndicator();
+                    playBoosterAvailableSound(); // Play sound when booster unlocks
                 }
                 
                 // Save achievements to localStorage
@@ -1456,6 +1523,7 @@
                         // Re-enable booster after 400ms delay
                         boosterReenableTimeout = setTimeout(() => {
                             updateBoosterIndicator();
+                            playBoosterAvailableSound(); // Play sound when booster is ready again
                             boosterReenableTimeout = null;
                         }, 400);
                     } else {
@@ -1819,6 +1887,8 @@
                         x: lastDroppedFruit.velocity.x, 
                         y: BOOSTED_DROP_VELOCITY 
                     });
+                    // Play sound when booster is used
+                    playBoosterUsedSound();
                     // Clear the reference so we don't boost again
                     lastDroppedFruit = null;
                     // Activate cooldown for next 5 drops
