@@ -1918,6 +1918,14 @@
                 headerEl.addEventListener('pointermove', stopToolbarEventBubbling, { passive: false });
                 headerEl.addEventListener('pointerup', stopToolbarEventBubbling, { passive: false });
                 
+                // Prevent booster indicator and tooltip events from bubbling to game
+                boosterIndicator.addEventListener('pointerdown', stopToolbarEventBubbling, { passive: false });
+                boosterIndicator.addEventListener('pointermove', stopToolbarEventBubbling, { passive: false });
+                boosterIndicator.addEventListener('pointerup', stopToolbarEventBubbling, { passive: false });
+                boosterTooltip.addEventListener('pointerdown', stopToolbarEventBubbling, { passive: false });
+                boosterTooltip.addEventListener('pointermove', stopToolbarEventBubbling, { passive: false });
+                boosterTooltip.addEventListener('pointerup', stopToolbarEventBubbling, { passive: false });
+                
                 restartButton.addEventListener('click', handleRestart);
                 restartMenuButton.addEventListener('click', handleRestartFromMenu);
                 restartConfirmYes.addEventListener('click', confirmRestart);
@@ -2115,6 +2123,12 @@
                 headerEl.removeEventListener('pointerdown', stopToolbarEventBubbling);
                 headerEl.removeEventListener('pointermove', stopToolbarEventBubbling);
                 headerEl.removeEventListener('pointerup', stopToolbarEventBubbling);
+                boosterIndicator.removeEventListener('pointerdown', stopToolbarEventBubbling);
+                boosterIndicator.removeEventListener('pointermove', stopToolbarEventBubbling);
+                boosterIndicator.removeEventListener('pointerup', stopToolbarEventBubbling);
+                boosterTooltip.removeEventListener('pointerdown', stopToolbarEventBubbling);
+                boosterTooltip.removeEventListener('pointermove', stopToolbarEventBubbling);
+                boosterTooltip.removeEventListener('pointerup', stopToolbarEventBubbling);
                 restartButton.removeEventListener('click', handleRestart);
                 restartMenuButton.removeEventListener('click', handleRestartFromMenu);
                 restartConfirmYes.removeEventListener('click', confirmRestart);
