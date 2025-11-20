@@ -1840,8 +1840,10 @@
                         if (fruitsInWarningZone.length > 0) {
                             if (!isWarningActive) {
                                 isWarningActive = true;
-                                playWarningSound();
                             }
+                            // Play warning sound repeatedly while warning is active
+                            // The 2-second cooldown in playWarningSound() ensures proper timing
+                            playWarningSound();
                         } else {
                             isWarningActive = false;
                         }
