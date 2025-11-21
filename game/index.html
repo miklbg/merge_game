@@ -89,7 +89,7 @@
             z-index: 20;
             pointer-events: auto;
             background-color: #69abde;
-            padding: 16px;
+            padding: 16px 16px 0px 16px;
         }
         
         #preview-fruit {
@@ -221,7 +221,7 @@
             /* Evolution row is third grid row - fixed height */
             width: 100%;
             background-color: #7b9f2c;
-            padding: 8px;
+            padding: 8px 8px 0px 8px;
             /* Add safe area padding for iOS Safari at the bottom */
             padding-bottom: max(8px, env(safe-area-inset-bottom));
             display: flex;
@@ -598,7 +598,7 @@
             function updateBoosterIndicatorPosition() {
                 // Position booster indicator in the middle of the game area above the red line
                 const gameOverLineViewportY = worldToViewportY(gameOverLineY);
-                const centerY = gameOverLineViewportY / 2;
+                const centerY = gameOverLineViewportY / 2 - 20; // 20=half width
                 boosterIndicator.style.top = `${centerY}px`;
                 boosterTooltip.style.top = `${centerY}px`;
             }
