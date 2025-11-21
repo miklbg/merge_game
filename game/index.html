@@ -1226,13 +1226,20 @@
                                     drawWidth = containerSize * imgAspect;
                                 }
                                 
-                                const offsetX = drawWidth / 2;
-                                const offsetY = drawHeight / 2;
+                                // Get physics body offset from fruit data
+                                const bodyOffsetX = fruitData.offsetX || 0;
+                                const bodyOffsetY = fruitData.offsetY || 0;
+                                
+                                // Calculate image center offset
+                                const imgCenterX = drawWidth / 2;
+                                const imgCenterY = drawHeight / 2;
                                 
                                 context.save();
                                 context.translate(body.position.x, body.position.y);
                                 context.rotate(body.angle);
-                                context.drawImage(img, -offsetX, -offsetY, drawWidth, drawHeight);
+                                // Draw image offset by negative of body offset to maintain visual alignment
+                                // This ensures the image and hitbox rotate together correctly
+                                context.drawImage(img, -imgCenterX - bodyOffsetX, -imgCenterY - bodyOffsetY, drawWidth, drawHeight);
                                 context.restore();
                             }
                         }
