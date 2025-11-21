@@ -56,10 +56,10 @@
             height: 100vh;
             height: 100dvh;
             
-            /* Width constrained by aspect ratio: height * 2/3 */
-            /* Use min to ensure it doesn't exceed viewport width */
-            width: min(100vw, calc(100vh * 2 / 3));
-            width: min(100dvw, calc(100dvh * 2 / 3));
+            /* Width set to match 2:3 aspect ratio of game area */
+            /* This ensures toolbars don't extend beyond game canvas width */
+            width: min(100vw, calc((100vh - 88px - 56px) * 2 / 3));
+            width: min(100dvw, calc((100dvh - 88px - 56px) * 2 / 3));
             
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             position: relative;
