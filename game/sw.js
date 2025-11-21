@@ -25,7 +25,11 @@ const urlsToCache = [
   './manifest.json'
 ];
 
-// Helper function to check if response is valid for caching
+/**
+ * Checks if a response is valid for caching
+ * @param {Response} response - The fetch response to validate
+ * @returns {boolean} True if response should be cached (status 200-299 and type 'basic' or 'cors')
+ */
 function isValidResponse(response) {
   return response && 
          response.status >= 200 && 
