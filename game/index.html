@@ -35,6 +35,9 @@
             margin: 0;
             padding: 0;
             background: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         #game-container {
@@ -43,11 +46,14 @@
             grid-template-rows: auto 1fr auto;
             grid-template-columns: 1fr;
             
-            /* Full viewport dimensions */
-            width: 100vw;
-            width: 100dvw;
+            /* Container sized based on viewport */
             height: 100vh;
             height: 100dvh;
+            
+            /* Width constrained by aspect ratio: height * (2/3) */
+            /* Use min to ensure it doesn't exceed viewport width */
+            width: min(100vw, calc(100vh * 2 / 3));
+            width: min(100dvw, calc(100dvh * 2 / 3));
             
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             position: relative;
@@ -59,11 +65,6 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            
-            /* Center the game area horizontally */
-            display: flex;
-            justify-content: center;
-            align-items: stretch;
             background: #f3f4f6;
         }
 
@@ -90,15 +91,14 @@
         }
 
         #game-canvas-wrapper {
-            /* Game canvas maintains 2:3 aspect ratio based on available height */
+            /* Game canvas fills the game wrapper area */
             position: absolute;
             top: 0;
             bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: auto;
-            /* Width is calculated as: height * (2/3) to maintain 2:3 aspect ratio */
-            aspect-ratio: 2 / 3;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
             z-index: 1;
             /* Replace gradient with world.png background that stretches to fit */
             background-image: url('assets/world.png');
