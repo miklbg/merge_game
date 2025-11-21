@@ -53,8 +53,8 @@ self.addEventListener('fetch', event => {
         const fetchRequest = event.request.clone();
         
         return fetch(fetchRequest).then(response => {
-          // Check if valid response - allow both basic and cors types
-          if (!response || response.status !== 200 || (response.type !== 'basic' && response.type !== 'cors')) {
+          // Check if valid response - allow both basic and cors types with successful status codes
+          if (!response || response.status < 200 || response.status >= 300 || (response.type !== 'basic' && response.type !== 'cors')) {
             return response;
           }
           
@@ -72,7 +72,7 @@ self.addEventListener('fetch', event => {
           return response;
         }).catch(err => {
           console.error('Fetch failed:', err);
-          // Return a basic offline response or cached fallback
+          // Network request failed - the resource is not cached
           throw err;
         });
       })
