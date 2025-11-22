@@ -69,6 +69,42 @@ Background music is sourced from Pixabay:
 - **Physics**: Matter.js
 - **Storage**: LocalStorage for game state and high scores
 - **Browser Compatibility**: Modern browsers with HTML5 Audio and Canvas support
+- **Progressive Web App (PWA)**: Installable with offline support via Service Worker
+
+## 🔄 Updating the Game
+
+### For Players (iOS and all platforms)
+
+If you're not seeing the latest changes after an update:
+
+1. **Use the Clear Cache Button** (Recommended):
+   - Tap the menu button (☰) in the top-left corner
+   - Tap "Clear Cache & Reload" at the bottom of the menu
+   - The app will clear all cached files and reload automatically
+
+2. **Manual Cache Clear**:
+   - **iOS Safari**: Settings → Safari → Clear History and Website Data
+   - **iOS PWA (Home Screen)**: Delete the app from your home screen and re-add it
+   - **Chrome/Android**: Settings → Privacy → Clear browsing data → Cached images and files
+
+3. **Force Refresh** (Desktop browsers):
+   - Windows/Linux: `Ctrl + Shift + R` or `Ctrl + F5`
+   - Mac: `Cmd + Shift + R`
+
+### For Developers
+
+When deploying updates:
+
+1. Update the `VERSION` constant in `game/sw.js` (e.g., from `1.0.1` to `1.0.2`)
+2. The Service Worker will automatically:
+   - Create a new cache with the updated version
+   - Delete old caches
+   - Serve fresh content to users
+
+The game checks for updates:
+- Every 60 seconds while the app is open
+- When the browser tab becomes visible again
+- When users tap "Clear Cache & Reload"
 
 ## 🚀 Running Locally
 
