@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="description" content="A physics-based puzzle game where you drop and merge fruits to create larger fruits and score points!">
     <meta name="theme-color" content="#69abde">
+    
+    <!-- iOS-specific meta tags for cache control -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    
     <title>Fruit Merge Game</title>
     
     <!-- Favicon -->
@@ -459,6 +464,9 @@
                         <span id="sounds-status">On</span>
                     </button>
                 </div>
+                <button id="clear-cache-button" class="px-4 py-2 bg-purple-500 text-white font-bold rounded-lg shadow-lg text-sm hover:bg-purple-400 transition-all">
+                    Clear Cache & Reload
+                </button>
             </div>
         </div>
 
@@ -500,6 +508,7 @@
             const musicStatus = document.getElementById('music-status');
             const soundsToggle = document.getElementById('sounds-toggle');
             const soundsStatus = document.getElementById('sounds-status');
+            const clearCacheButton = document.getElementById('clear-cache-button');
             
             const scoreEl = document.getElementById('score');
             const highScoreEl = document.getElementById('high-score');
@@ -1877,6 +1886,7 @@
                 resumeButton.addEventListener('click', togglePauseMenu);
                 musicToggle.addEventListener('click', toggleMusic);
                 soundsToggle.addEventListener('click', toggleSounds);
+                clearCacheButton.addEventListener('click', handleClearCache);
                 boosterIndicator.addEventListener('click', toggleBoosterTooltip);
             }
             
@@ -2000,6 +2010,49 @@
                 
                 // Save preference to localStorage
                 saveAudioPreferences();
+            }
+            
+            // --- Clear Cache and Reload ---
+            function handleClearCache() {
+                if (!navigator.serviceWorker || !navigator.serviceWorker.controller) {
+                    // No service worker, just reload
+                    window.location.reload();
+                    return;
+                }
+                
+                // Show loading feedback
+                const originalText = clearCacheButton.textContent;
+                clearCacheButton.textContent = 'Clearing...';
+                clearCacheButton.disabled = true;
+                
+                // Create a message channel to receive response
+                const messageChannel = new MessageChannel();
+                
+                // Add timeout to prevent indefinite waiting
+                const timeout = setTimeout(() => {
+                    clearCacheButton.textContent = originalText;
+                    clearCacheButton.disabled = false;
+                    window.location.reload();
+                }, 10000); // 10 second timeout
+                
+                messageChannel.port1.onmessage = (event) => {
+                    clearTimeout(timeout);
+                    if (event.data.success) {
+                        // Cache cleared, now reload the page
+                        window.location.reload();
+                    } else {
+                        // Failed to clear cache, still try to reload
+                        clearCacheButton.textContent = originalText;
+                        clearCacheButton.disabled = false;
+                        window.location.reload();
+                    }
+                };
+                
+                // Send message to service worker to clear cache
+                navigator.serviceWorker.controller.postMessage(
+                    { type: 'CLEAR_CACHE' },
+                    [messageChannel.port2]
+                );
             }
             
             // --- Restart from Pause Menu ---
@@ -2127,7 +2180,8 @@
                 burgerMenuButton.removeEventListener('click', togglePauseMenu);
                 resumeButton.removeEventListener('click', togglePauseMenu);
                 musicToggle.removeEventListener('click', toggleMusic);
-                soundsToggle.removeEventListener('click', toggleSounds); 
+                soundsToggle.removeEventListener('click', toggleSounds);
+                clearCacheButton.removeEventListener('click', handleClearCache);
                 Events.off(engine);
                 Events.off(render);
                 World.clear(world, false);
@@ -2368,14 +2422,58 @@
     <script>
         // Register Service Worker for PWA support
         if ('serviceWorker' in navigator) {
+            let refreshing = false;
+            
+            // Reload page when new service worker takes control
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (refreshing) return;
+                refreshing = true;
+                console.log('New service worker activated, reloading page...');
+                window.location.reload();
+            });
+            
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
                     .then(registration => {
                         console.log('ServiceWorker registered:', registration.scope);
+                        
+                        // Check for updates every 60 seconds
+                        setInterval(() => {
+                            registration.update();
+                        }, 60000);
+                        
+                        // Check for updates when page becomes visible
+                        document.addEventListener('visibilitychange', () => {
+                            if (!document.hidden) {
+                                registration.update();
+                            }
+                        });
+                        
+                        // Listen for update found
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // New service worker available
+                                    console.log('New content is available, use "Clear Cache & Reload" to update');
+                                    
+                                    // Automatically activate the new service worker
+                                    newWorker.postMessage({ type: 'SKIP_WAITING' });
+                                }
+                            });
+                        });
                     })
                     .catch(err => {
                         console.log('ServiceWorker registration failed:', err);
                     });
+                
+                // Listen for messages from service worker
+                navigator.serviceWorker.addEventListener('message', event => {
+                    if (event.data && event.data.type === 'SW_UPDATED') {
+                        console.log('Service Worker updated to version:', event.data.version);
+                    }
+                });
             });
         }
     </script>

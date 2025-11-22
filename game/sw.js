@@ -1,5 +1,7 @@
 // Service Worker for Fruit Merge Game
-const CACHE_NAME = 'fruit-merge-v1';
+// Update this version number whenever you make changes to force cache refresh
+const VERSION = '1.0.1';
+const CACHE_NAME = `fruit-merge-v${VERSION}`;
 const urlsToCache = [
   './index.html',
   './css/tailwind.min.css',
@@ -39,10 +41,13 @@ function isValidResponse(response) {
 
 // Install event - cache resources
 self.addEventListener('install', event => {
+  // Force the waiting service worker to become the active service worker
+  self.skipWaiting();
+  
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        console.log('Opened cache');
+        console.log('Opened cache:', CACHE_NAME);
         return cache.addAll(urlsToCache);
       })
       .catch(err => {
@@ -53,6 +58,31 @@ self.addEventListener('install', event => {
 
 // Fetch event - serve from cache, fallback to network
 self.addEventListener('fetch', event => {
+  const url = new URL(event.request.url);
+  
+  // For HTML files, use network-first strategy to ensure updates
+  if (event.request.destination === 'document' || url.pathname.endsWith('.html')) {
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          // Clone and cache the fresh response
+          if (isValidResponse(response)) {
+            const responseToCache = response.clone();
+            caches.open(CACHE_NAME).then(cache => {
+              cache.put(event.request, responseToCache);
+            });
+          }
+          return response;
+        })
+        .catch(() => {
+          // If network fails, fallback to cache
+          return caches.match(event.request);
+        })
+    );
+    return;
+  }
+  
+  // For other resources, use cache-first strategy
   event.respondWith(
     caches.match(event.request)
       .then(response => {
@@ -94,17 +124,61 @@ self.addEventListener('fetch', event => {
 
 // Activate event - clean up old caches
 self.addEventListener('activate', event => {
-  const cacheWhitelist = [CACHE_NAME];
+  // Take control of all clients immediately
   event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (!cacheWhitelist.includes(cacheName)) {
-            console.log('Deleting old cache:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
+    clients.claim().then(() => {
+      const cacheWhitelist = [CACHE_NAME];
+      return caches.keys().then(cacheNames => {
+        return Promise.all(
+          cacheNames.map(cacheName => {
+            if (!cacheWhitelist.includes(cacheName)) {
+              console.log('Deleting old cache:', cacheName);
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      });
+    }).then(() => {
+      // Notify all clients that a new version is active
+      return self.clients.matchAll().then(clients => {
+        clients.forEach(client => {
+          client.postMessage({
+            type: 'SW_UPDATED',
+            version: VERSION
+          });
+        });
+      });
     })
   );
+});
+
+// Message handler for manual updates
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+  
+  if (event.data && event.data.type === 'CLEAR_CACHE') {
+    event.waitUntil(
+      caches.keys().then(cacheNames => {
+        return Promise.all(
+          cacheNames.map(cacheName => {
+            console.log('Clearing cache:', cacheName);
+            return caches.delete(cacheName);
+          })
+        );
+      }).then(() => {
+        // Notify the client that cache is cleared
+        if (event.ports && event.ports[0]) {
+          event.ports[0].postMessage({ success: true });
+        }
+      }).catch(err => {
+        console.error('Failed to clear cache:', err);
+        // Notify the client about the error
+        if (event.ports && event.ports[0]) {
+          event.ports[0].postMessage({ success: false, error: err.message });
+        }
+      })
+    );
+  }
 });
