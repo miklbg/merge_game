@@ -59,8 +59,8 @@
             /* Use CSS Grid for clean vertical stacking */
             display: grid;
             grid-template-rows: auto 1fr auto;
-            /* Use min-content so grid column width is determined by narrowest content (canvas) */
-            grid-template-columns: min-content;
+            /* Use 100% width to fill viewport, centering handled by game-wrapper */
+            grid-template-columns: 100%;
             
             /* Container sized based on viewport */
             height: 100vh;
