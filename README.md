@@ -77,17 +77,12 @@ Background music is sourced from Pixabay:
 
 If you're not seeing the latest changes after an update:
 
-1. **Use the Clear Cache Button** (Recommended):
-   - Tap the menu button (☰) in the top-left corner
-   - Tap "Clear Cache & Reload" at the bottom of the menu
-   - The app will clear all cached files and reload automatically
-
-2. **Manual Cache Clear**:
+1. **Manual Cache Clear**:
    - **iOS Safari**: Settings → Safari → Clear History and Website Data
    - **iOS PWA (Home Screen)**: Delete the app from your home screen and re-add it
    - **Chrome/Android**: Settings → Privacy → Clear browsing data → Cached images and files
 
-3. **Force Refresh** (Desktop browsers):
+2. **Force Refresh** (Desktop browsers):
    - Windows/Linux: `Ctrl + Shift + R` or `Ctrl + F5`
    - Mac: `Cmd + Shift + R`
 

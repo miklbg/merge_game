@@ -1,6 +1,6 @@
 // Service Worker for Fruit Merge Game
 // Update this version number whenever you make changes to force cache refresh
-const VERSION = '1.0.1';
+const VERSION = '1.0.2';
 const CACHE_NAME = `fruit-merge-v${VERSION}`;
 const urlsToCache = [
   './index.html',
@@ -156,29 +156,5 @@ self.addEventListener('activate', event => {
 self.addEventListener('message', event => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
-  }
-  
-  if (event.data && event.data.type === 'CLEAR_CACHE') {
-    event.waitUntil(
-      caches.keys().then(cacheNames => {
-        return Promise.all(
-          cacheNames.map(cacheName => {
-            console.log('Clearing cache:', cacheName);
-            return caches.delete(cacheName);
-          })
-        );
-      }).then(() => {
-        // Notify the client that cache is cleared
-        if (event.ports && event.ports[0]) {
-          event.ports[0].postMessage({ success: true });
-        }
-      }).catch(err => {
-        console.error('Failed to clear cache:', err);
-        // Notify the client about the error
-        if (event.ports && event.ports[0]) {
-          event.ports[0].postMessage({ success: false, error: err.message });
-        }
-      })
-    );
   }
 });
