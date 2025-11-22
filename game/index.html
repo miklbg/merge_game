@@ -104,7 +104,7 @@
             z-index: 20;
             pointer-events: auto;
             background-color: #69abde;
-            padding: 8px 16px 0px 16px;
+            padding: 8px 12px 0px 12px;
         }
         
         #preview-fruit {
@@ -349,11 +349,11 @@
 
     <div id="game-container">
         <!-- Header is first grid row -->
-        <div id="game-header" class="grid grid-cols-4 gap-2">
+        <div id="game-header" class="grid grid-cols-4 gap-1">
             <!-- Burger Menu Icon (left aligned) -->
             <div class="flex items-center justify-start">
-                <button id="burger-menu-button" class="p-2 bg-transparent hover:bg-orange-100 rounded-lg transition-all group" title="Menu" aria-label="Menu">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-orange-600 group-hover:text-orange-700 transition-colors">
+                <button id="burger-menu-button" class="p-1.5 bg-transparent hover:bg-orange-100 rounded-lg transition-all group" title="Menu" aria-label="Menu">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-orange-600 group-hover:text-orange-700 transition-colors">
                         <line x1="3" y1="12" x2="21" y2="12"></line>
                         <line x1="3" y1="6" x2="21" y2="6"></line>
                         <line x1="3" y1="18" x2="21" y2="18"></line>
@@ -362,22 +362,22 @@
             </div>
             
             <!-- Score (centered) -->
-            <div class="text-center flex flex-col justify-center">
-                <span class="text-sm opacity-80">Score</span>
-                <div id="score" class="text-2xl font-bold">0</div>
+            <div class="text-center flex flex-col justify-center min-w-0">
+                <span class="text-xs opacity-80 whitespace-nowrap overflow-hidden text-ellipsis">Score</span>
+                <div id="score" class="text-xl font-bold">0</div>
             </div>
             
             <!-- High Score (centered) -->
-            <div class="text-center flex flex-col justify-center">
-                <span class="text-sm opacity-80">High Score</span>
-                <div id="high-score" class="text-2xl font-bold">0</div>
+            <div class="text-center flex flex-col justify-center min-w-0">
+                <span class="text-xs opacity-80 whitespace-nowrap overflow-hidden text-ellipsis">Best</span>
+                <div id="high-score" class="text-xl font-bold">0</div>
             </div>
             
             <!-- Next Fruit Icon (right aligned) -->
-            <div class="text-center flex flex-col justify-center items-end">
-                <span class="text-sm opacity-80">Next</span>
-                <div id="next-fruit" class="flex justify-center items-center h-9">
-                    <img id="next-fruit-img" src="" alt="Next fruit" class="max-h-9 max-w-9 object-contain" style="width: 24px; height: 24px;">
+            <div class="text-center flex flex-col justify-center items-end min-w-0">
+                <span class="text-xs opacity-80 whitespace-nowrap">Next</span>
+                <div id="next-fruit" class="flex justify-center items-center h-8">
+                    <img id="next-fruit-img" src="" alt="Next fruit" class="max-h-8 max-w-8 object-contain" style="width: 22px; height: 22px;">
                 </div>
             </div>
         </div>
